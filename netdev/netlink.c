@@ -167,7 +167,6 @@ int dev_up(const char* devname){
 int get_netdev_names(char*** results){
   static int seq;
   char recv_buff[1024*1024];
-  int rtnetlink_sk = socket(AF_NETLINK, SOCK_DGRAM, NETLINK_ROUTE);
   int len;
   int n_devices = 0;
   char** device_names = NULL;
@@ -185,11 +184,11 @@ int get_netdev_names(char*** results){
   r.ifm.ifi_family = AF_PACKET;
 
   // send request to dump the root table
-  send(rtnetlink_sk, &r, r.nh.nlmsg_len, 0);
+  send(rtnetlink_sock_fd, &r, r.nh.nlmsg_len, 0);
 
   while(1){
     // receive the reply
-    len = read(rtnetlink_sk, recv_buff, sizeof(recv_buff));
+    len = read(rtnetlink_sock_fd, recv_buff, sizeof(recv_buff));
 
     // parse the reply
     struct nlmsghdr* nh = (struct nlmsghdr*)recv_buff;
