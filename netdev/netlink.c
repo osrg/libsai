@@ -20,8 +20,8 @@ __attribute__((constructor)) __netlink_init(){
   }
 }
 
-// To understand this function, see the link below:
-// http://linuxjm.osdn.jp/html/LDP_man-pages/man3/rtnetlink.3.html
+// To understand this function, see EXAMPLE section in the link below:
+// http://man7.org/linux/man-pages/man3/rtnetlink.3.html
 void add_netlink_msg(struct nlmsghdr* nh, int type, const void* data, int raw_data_length){
   struct rtattr *rta;
   int rta_length = RTA_LENGTH(raw_data_length);
