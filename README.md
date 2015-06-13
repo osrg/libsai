@@ -7,10 +7,10 @@ While SAI provides general APIs for switch applications and vendors can have the
 
 Our goal is to mitigate these issues by providing open sourced SAI implementation that leverage software switches.
 
-# How to build
+## How to build
 Please refer to [Building.md](Building.md)
 
-# How to run
+## How to run
 Before staring, make sure you finished everything in the "How to build" section.
 
 1. Run the switch VM
@@ -36,5 +36,5 @@ Before staring, make sure you finished everything in the "How to build" section.
 
 At this point, the three VMs are connected with a topology described in the below figure.
 
-# Copyright
+## Copyright
 Copyright (C) 2015 [Nippon Telegraph and Telephone Corporation](http://www.ntt.co.jp/index_e.html). Released under [Apache License 2.0](LICENSE).
