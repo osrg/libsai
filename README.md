@@ -16,7 +16,7 @@ Before staring, make sure you finished everything in the "How to build" section.
 1. Run the switch VM
 
     ```
-    host-OS $ sudo qemu-system-x86-64 [image of switch VM] -device rocker,name=sw1,len-ports=4,ports[0]=dev0,ports[1]=dev1,ports[2]=dev2 -netdev bridge,br=br0,id=dev0 -netdev bridge,br=br1,id=dev1 -netdev bridge,br=br1,id=dev2
+    host-OS $ sudo qemu-system-x86-64 [image of switch VM] -device rocker,name=sw1,len-ports=4,ports[0]=dev0,ports[1]=dev1,ports[2]=dev2 -netdev bridge,br=br0,id=dev0 -netdev bridge,br=br1,id=dev1 -netdev bridge,br=br2,id=dev2
     ```
 
 2. Run the three other VMs
