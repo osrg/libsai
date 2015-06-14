@@ -51,6 +51,8 @@ The two VLANs are connected to virtual router (sairouter) and routed each other 
 ![three VMs are connected and routed under the topology](doc/libsai_VM_connected.png)
 
 4. Try ping between the VMs and see what is happening.
+ - Ping from VM1 to VM2 while executing tcpdump on VM2: You will first see an ARP request arrives to VM2 from VM1, and then ICMP packets start arriving. This is because VM1 and VM2 are connected to the same VLAN. Note that you cannot see the VLAN tags on the VMs because they are automatically pushed/dropped inside the switch VM.
+ - Ping from VM1 to VM3 while executing tcpdump on VM3: You will again see an ARP request arriving to VM3, but this time not from VM1 but from 192.168.2.1. This is because VM1 and VM3 are connected to different VLANs and the two VLANs are routed on L3.
 
 ## Copyright
 Copyright (C) 2015 [Nippon Telegraph and Telephone Corporation](http://www.ntt.co.jp/index_e.html). Released under [Apache License 2.0](LICENSE).
