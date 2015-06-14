@@ -45,7 +45,9 @@ Note that the VMs are still not yet "switched", thus no pakcets can be exchanged
     switch-VM $ cd libsai
     switch-VM $ sudo ./a.out
     ````
-At this point, the trhee VMs are connected and routed under the topology in the figure below.
+At this point, the three VMs are connected and routed under the topology in the figure below.
+VM1 and VM2 are connected to the same VLAN (saivlan), and VM3 is connected to another VLAN.
+The two VLANs are connected to virtual router (sairouter) and routed each other so that VMs in different VLANs can communicate each other.
 ![three VMs are connected and routed under the topology](./libsai_VM_connected.png)
 
 4. Try ping between the VMs and see what is happening.
