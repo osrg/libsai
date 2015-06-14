@@ -28,7 +28,6 @@ Before staring, make sure you finished everything in the "How to build" section.
     ````
 The three VMs are attached to the switch VM as described in figure.
 Note that the VMs are still not yet "switched", thus no pakcets can be exchanged even if you try to set addresses to the VMs.
-
 ![three VMs are attached to the switch VM](./libsai_VM_attached.png)
 
 3. Assing addresses to the VMs, and execute libsai in the switch VM.
@@ -47,7 +46,6 @@ Note that the VMs are still not yet "switched", thus no pakcets can be exchanged
     switch-VM $ sudo ./a.out
     ````
 At this point, the trhee VMs are connected and routed under the topology in the figure below.
-
 ![three VMs are connected and routed under the topology](./libsai_VM_connected.png)
 
 4. Try ping between the VMs and see what is happening.
