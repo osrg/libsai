@@ -8,7 +8,7 @@ While SAI provides general APIs for switch applications and vendors can have the
 Our goal is to mitigate these issues by providing open sourced SAI implementation that leverage software switches.
 
 ## How to build
-Please refer to [Building.md](Building.md)
+Please refer to [doc/Building.md](doc/Building.md)
 
 ## How to run
 Before staring, make sure you finished everything in the "How to build" section.
@@ -28,7 +28,7 @@ Before staring, make sure you finished everything in the "How to build" section.
     ````
 The three VMs are attached to the switch VM as described in figure.
 Note that the VMs are still not yet "switched", thus no pakcets can be exchanged even if you try to set addresses to the VMs.
-![three VMs are attached to the switch VM](./libsai_VM_attached.png)
+![three VMs are attached to the switch VM](doc/libsai_VM_attached.png)
 
 3. Assing addresses to the VMs, and execute libsai in the switch VM.
 
@@ -48,7 +48,7 @@ Note that the VMs are still not yet "switched", thus no pakcets can be exchanged
 At this point, the three VMs are connected and routed under the topology in the figure below.
 VM1 and VM2 are connected to the same VLAN (saivlan), and VM3 is connected to another VLAN.
 The two VLANs are connected to virtual router (sairouter) and routed each other so that VMs in different VLANs can communicate each other.
-![three VMs are connected and routed under the topology](./libsai_VM_connected.png)
+![three VMs are connected and routed under the topology](doc/libsai_VM_connected.png)
 
 4. Try ping between the VMs and see what is happening.
 
