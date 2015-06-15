@@ -45,10 +45,10 @@ Note that the VMs are still not yet "switched", thus no pakcets can be exchanged
     VM3$ sudo ip link set up eth0
     VM3$ sudo ip route add 192.168.1.0/24 via 192.168.2.1 dev eth0  # be careful again, VM3 is under 192.168.2.0/24
     
-    switch-VM $ cd libsai
-    switch-VM $ sudo ./a.out
-    switch-VM $ sudo su -
-    switch-VM $ echo "1" > /proc/sys/net/ipv4/ip_forward
+    switch-VM$ cd libsai
+    switch-VM$ sudo ./a.out
+    switch-VM$ sudo su -
+    switch-VM# echo "1" > /proc/sys/net/ipv4/ip_forward
     ````
 At this point, the three VMs are connected and routed under the topology in the figure below.
 VM1 and VM2 are connected to the same VLAN (saivlan), and VM3 is connected to another VLAN.
