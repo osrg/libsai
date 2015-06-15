@@ -31,7 +31,7 @@ Note that the VMs are still not yet "switched", thus no pakcets can be exchanged
 ![three VMs are attached to the switch VM](doc/libsai_VM_attached.png)
 
 3. Assing addresses to the VMs, and execute libsai in the switch VM.
-\
+
     ````
     VM1$ sudo ip addr add 192.168.1.2/24 dev eth0
     VM1$ sudo ip link set up eth0
@@ -57,7 +57,6 @@ The two VLANs are connected to virtual router (sairouter) and routed each other 
 ## How to hack
 In main.c the topology used above is intutively coded.
 
-    ````
     // initialize the switch
     sw = switch_init();
 
@@ -76,7 +75,6 @@ In main.c the topology used above is intutively coded.
     // assign 192.168.2.0/24 to vlan2
     add_vlan_to_router(router, vlan2, make_ip4("192.168.2.1"));
     create_new_route(router, make_ip4("192.168.2.0"), make_ip4("255.255.255.0"), vlan2);
-    ````
 
 You can create as many VLANs as you want and create more complex routes by using these abstractions.
 Note that as this project is still in its preliminary stage, no other SAI APIs (acl, samplepacket, QoS, ...) are not yet supported.
