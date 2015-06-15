@@ -15,7 +15,16 @@
     allow br2
     ```
 
-6. Boot the switch VM with user mode network enabled, clone this repository and make it.
+6. Create bridges on the host OS. Note that they must be re-created after the host OS is rebooted.
+
+    ```
+    host-OS$ sudo apt-get install bridge-utils
+    host-OS$ sudo brctl addbr br0
+    host-OS$ sudo brctl addbr br1
+    host-OS$ sudo brctl addbr br2
+    ```
+
+7. Boot the switch VM with user mode network enabled, clone this repository and make it.
 
     ```
     host-OS $ qemu-system-x86-64 [image of switch VM] -net nic -net user
