@@ -31,7 +31,7 @@ Note that the VMs are still not yet "switched", thus no pakcets can be exchanged
 ![three VMs are attached to the switch VM](doc/libsai_VM_attached.png)
 
 3. Assing addresses to the VMs, and execute libsai in the switch VM.
-
+\
     ````
     VM1$ sudo ip addr add 192.168.1.2/24 dev eth0
     VM1$ sudo ip link set up eth0
@@ -53,6 +53,37 @@ The two VLANs are connected to virtual router (sairouter) and routed each other 
 4. Try ping between the VMs and see what is happening.
  - **Ping from VM1 to VM2 while executing tcpdump on VM2**: You will first see an ARP request arrives to VM2 from VM1, and then ICMP packets start arriving. This is because VM1 and VM2 are connected to the same VLAN. Note that you cannot see the VLAN tags on the VMs because they are automatically pushed/dropped inside the switch VM.
  - **Ping from VM1 to VM3 while executing tcpdump on VM3**: You will again see an ARP request arriving to VM3, but this time not from VM1 but from 192.168.2.1. This is because VM1 and VM3 are connected to different VLANs and the two VLANs are routed on L3.
+
+## How to hack
+In main.c the topology used above is intutively coded.
+
+    ````
+    // initialize the switch
+    sw = switch_init();
+
+    ......
+    
+    Vlan* vlan1 = create_vlan(2, &sw->ports[0], &sw->ports[1]);
+    Vlan* vlan2 = create_vlan(2, &sw->ports[2], &sw->ports[3]);
+
+    // create a virtual router
+    Router* router = create_router(sw);
+
+    // assign 192.168.1.0/24 to vlan1
+    add_vlan_to_router(router, vlan1, make_ip4("192.168.1.1"));
+    create_new_route(router, make_ip4("192.168.1.0"), make_ip4("255.255.255.0"), vlan1);
+
+    // assign 192.168.2.0/24 to vlan2
+    add_vlan_to_router(router, vlan2, make_ip4("192.168.2.1"));
+    create_new_route(router, make_ip4("192.168.2.0"), make_ip4("255.255.255.0"), vlan2);
+    ````
+
+You can create as many VLANs as you want and create more complex routes by using these abstractions.
+Note that as this project is still in its preliminary stage, no other SAI APIs (acl, samplepacket, QoS, ...) are not yet supported.
+
+If you want to do something by directily touching SAI APIs, see libsai.c and libsai.h
+
+If you want to know what it does between SAI APIs and rocker device, see rocker/*.c
 
 ## Copyright
 Copyright (C) 2015 [Nippon Telegraph and Telephone Corporation](http://www.ntt.co.jp/index_e.html). Released under [Apache License 2.0](LICENSE).
