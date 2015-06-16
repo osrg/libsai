@@ -1,17 +1,17 @@
 # Libsai
 Libsai is a small SAI implementation for testing SAI applications.
 
-While SAI provides general APIs for switch applications and vendors can have their own SDKs running with SAI and their switches, there is no way to
- - Easily test SAI applications
- - Without using real SAI-capable switches
+The goal of the project is to help both hardware vendors and SAI application developers by
+ - Becoming a reference SAI implementation
+ - Providing an easy way to test SAI application on top of it
 
-Our goal is to mitigate these issues by providing open sourced SAI implementation that leverage software switches.
+The codes include not only some glue codes but also actual data-plane codes using a software switch, thus you can try playing with it on a single PC!
 
 ## How to build
 Please refer to [doc/Building.md](doc/Building.md)
 
 ## How to run
-Before staring, make sure you finished everything in the "How to build" section.
+Before starting, make sure you finished everything in the "How to build" section.
 
 1. Run the switch VM
 
@@ -19,16 +19,15 @@ Before staring, make sure you finished everything in the "How to build" section.
     host-OS$ sudo qemu-system-x86_64 [image of switch VM] -enable-kvm -device rocker,name=sw1,len-ports=4,ports[0]=dev0,ports[1]=dev1,ports[2]=dev2 -netdev bridge,br=br0,id=dev0 -netdev bridge,br=br1,id=dev1 -netdev bridge,br=br2,id=dev2
     ```
 
-2. Run the three other VMs
+2. Run the three other VMs, which you created by copying the switch VM in [doc/Building.md](doc/Building.md).
 
     ````
     host-OS$ sudo qemu-system-x86_64 [image of VM1] -enable-kvm -net nic,macaddr=52:54:00:00:00:11 -net bridge,br=br0
     host-OS$ sudo qemu-system-x86_64 [image of VM2] -enable-kvm -net nic,macaddr=52:54:00:00:00:12 -net bridge,br=br1
     host-OS$ sudo qemu-system-x86_64 [image of VM3] -enable-kvm -net nic,macaddr=52:54:00:00:00:13 -net bridge,br=br2
     ````
-The three VMs are attached to the switch VM as described in figure.
-Note that the VMs are still not yet "switched", thus no pakcets can be exchanged even if you try to set addresses to the VMs.
-![three VMs are attached to the switch VM](doc/libsai_VM_attached.png)
+The three VMs are attached to the switch VM, each to one port.
+Note that the VMs are still not yet "connected" each other, thus no pakcets can be exchanged even if you try to set addresses to the VMs.
 
 3. Assing addresses to the VMs, and execute libsai in the switch VM.
 

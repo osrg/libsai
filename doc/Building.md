@@ -1,6 +1,10 @@
 # How to build Libsai
-1. Install QEMU with rocker software switch enabled. We recommend to build the latest version retrieved from the [git repository](http://git.qemu.org/qemu.git). No special build option is required to enable rocker device.
-2. Install [Ubuntu 15.04 server](http://releases.ubuntu.com/vivid/) as a guest OS (any other linux distribution might work, if you have any special reason to use one).
+1. Install QEMU with rocker software switch embedded.
+ - We recommend to build the latest version retrieved from the [git repository](http://git.qemu.org/qemu.git).
+ - No special build option is required to enable rocker device.
+2. Install [Ubuntu 15.04 server](http://releases.ubuntu.com/vivid/) as a guest OS.
+ - We recommend the simplest installation, with no LVM and no all directories in the same partition.
+ - Any other linux distribution _might_ work, if you have any strong reason to use one.
 3. Boot the guest OS and replace the kernel by the one with rocker driver enabled.
 
     ```
@@ -12,9 +16,9 @@
     ```
 
  - The differences of the configs in the kernel installed above and original Ubuntu 15.04 are:
-  - CONFIG_NET_SWITCHDEV=y
-  - CONFIG_NET_VENDOR_ROCKER=y
-  - CONFIG_ROCKER=m
+  -- CONFIG_NET_SWITCHDEV=y
+  -- CONFIG_NET_VENDOR_ROCKER=y
+  -- CONFIG_ROCKER=m
 4. Let's refer the guest OS as "switch VM". Copy switch VM and make three more VMs, that will be refered "VM1", "VM2" and "VM3" hereafter.
 5. Allow QEMU to use bridges. Add following lines into `/etc/qemu/bridge.conf` of the host OS.
 
