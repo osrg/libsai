@@ -7,6 +7,11 @@ The goal of the project is to help both hardware vendors and SAI application dev
 
 The codes include not only some glue codes but also actual data-plane codes using a software switch, thus you can try playing with it on a single PC!
 
+The functionalities it supports as for now are:
+- L2 tenant isolation using VLAN (saiport, saivlan)
+- L3 inter-VLAN routing using virtual router (sainexthop, sairoute, sairouter)
+We are working hard to support other functionalities as well.
+
 ## How to build
 Please refer to [doc/Building.md](doc/Building.md)
 
@@ -81,11 +86,10 @@ In main.c the topology used above is intutively coded.
     create_new_route(router, make_ip4("192.168.2.0"), make_ip4("255.255.255.0"), vlan2);
 
 You can create as many VLANs as you want and create more complex routes by using these abstractions.
-Note that as this project is still in its preliminary stage, no other SAI APIs (acl, samplepacket, QoS, ...) are not yet supported.
 
 If you want to do something by directily touching SAI APIs, see libsai.c and libsai.h
 
-If you want to know what it does between SAI APIs and rocker device, see rocker/*.c
+If you want to know what it does between SAI APIs and rocker device (i.e. data plane), see rocker/*.c
 
 ## Copyright
 Copyright (C) 2015 [Nippon Telegraph and Telephone Corporation](http://www.ntt.co.jp/index_e.html). Released under [Apache License 2.0](LICENSE).
