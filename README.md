@@ -5,7 +5,7 @@ The goal of the project is to help both hardware vendors and SAI application dev
  - Becoming a reference SAI implementation
  - Providing an easy way to test SAI application on top of it
 
-The codes include not only some glue codes but also actual data-plane codes using a software switch, thus you can try playing with it on a single PC!
+The codes include not only some glue codes but also actual data-plane codes using a software switch, thus **you can try playing with it on a single PC!**
 
 The functionalities it supports as for now are:
 - L2 tenant isolation using VLAN (saiport, saivlan)
