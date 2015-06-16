@@ -14,11 +14,10 @@
     guest-OS$ sudo dpkg -i linux-image.deb
     guest-OS$ sudo shutdown -hP now
     ```
-
- - The differences of the configs in the kernel installed above and original Ubuntu 15.04 are:
-  -- CONFIG_NET_SWITCHDEV=y
-  -- CONFIG_NET_VENDOR_ROCKER=y
-  -- CONFIG_ROCKER=m
+ The differences of the configs in the kernel installed above and original Ubuntu 15.04 are:
+  - CONFIG_NET_SWITCHDEV=y
+  - CONFIG_NET_VENDOR_ROCKER=y
+  - CONFIG_ROCKER=m
 4. Let's refer the guest OS as "switch VM". Copy switch VM and make three more VMs, that will be refered "VM1", "VM2" and "VM3" hereafter.
 5. Allow QEMU to use bridges. Add following lines into `/etc/qemu/bridge.conf` of the host OS.
 
