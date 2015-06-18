@@ -230,13 +230,6 @@ Switch* switch_init(){
   int i;
   Switch* sw = malloc(sizeof(Switch));
   
-  switch_api = malloc(sizeof(sai_switch_api_t));
-  port_api = malloc(sizeof(sai_port_api_t));
-  virtual_router_api = malloc(sizeof(sai_virtual_router_api_t));
-  router_interface_api = malloc(sizeof(sai_router_interface_api_t));
-  route_api = malloc(sizeof(sai_route_api_t));
-  vlan_api = malloc(sizeof(sai_vlan_api_t));
-
   sai_api_query(SAI_API_SWITCH, (void**)&switch_api);
   sai_api_query(SAI_API_PORT, (void**)&port_api);
   sai_api_query(SAI_API_VIRTUAL_ROUTER, (void**)&virtual_router_api);
