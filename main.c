@@ -21,7 +21,7 @@ main(){
   int i;
 
   // initialize the switch
-  sw = switch_init();
+  sw = switch_init(NULL);
 
   printf("Number of rocker ports: %d\n", sw->number_of_ports);
   for(i=0;i<sw->number_of_ports;i++)

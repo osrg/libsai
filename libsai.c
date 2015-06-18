@@ -226,7 +226,7 @@ Vlan* create_vlan(int number_of_ports, .../* Port* p1, Port* p2, ... */){
   return v;
 }
 
-Switch* switch_init(){
+Switch* switch_init(sai_switch_notification_t* switch_notifications){
   int i;
   Switch* sw = malloc(sizeof(Switch));
   
@@ -239,7 +239,7 @@ Switch* switch_init(){
   sai_api_query(SAI_API_NEXT_HOP, (void**)&next_hop_api);
 
   // initialize the switch
-  switch_api->initialize_switch(0, NULL, NULL, NULL);
+  switch_api->initialize_switch(0, NULL, NULL, switch_notifications);
 
   sw->number_of_ports = get_switch_attribute_u32_single(SAI_SWITCH_ATTR_PORT_NUMBER);
   sw->ports = malloc(sizeof(Port) * sw->number_of_ports);

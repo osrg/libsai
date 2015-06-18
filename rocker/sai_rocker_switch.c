@@ -14,9 +14,11 @@
 // limitations under the License.
 
 #include <stdio.h>
+#include <stdlib.h>
 
 #include "sai_rocker.h"
 #include "sai_rocker_switch.h"
+#include "sai_rocker_fdb.h"
 
 sai_switch_api_t rocker_sai_switch_api;
 
@@ -80,5 +82,17 @@ sai_status_t rocker_initialize_switch(_In_ sai_switch_profile_id_t profile_id,
     dev_up(p->name);
   }
 
+  if(switch_notifications != NULL){
+    if(switch_notifications->on_fdb_event != NULL){
+      pthread_t pt;
+      struct fdb_update_nitifier_arg* arg = malloc(sizeof(struct fdb_update_nitifier_arg));
+      arg->f = switch_notifications->on_fdb_event;
+      arg->interval = 1;
+      pthread_create(&pt, NULL, fdb_update_notifier, (void*)arg);
+    }
+
+    // to be added for other event types
+  }
+  
   return SAI_STATUS_SUCCESS;
 }
