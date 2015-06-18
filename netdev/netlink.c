@@ -24,6 +24,8 @@
 #include <linux/netlink.h> 
 #include <linux/rtnetlink.h>
 
+#include "netlink.h"
+
 int rtnetlink_sock_fd;
 
 __attribute__((constructor)) __netlink_init(){
@@ -236,4 +238,79 @@ int get_netdev_names(char*** results){
   *results = device_names;
 
   return n_devices;
+}
+
+// almost the same as get_netdev_names, should be generalized
+int get_fdb(struct fib** results){
+  char recv_buff[1024*1024];
+  int len;
+  int n_fibs = 0;
+  struct fib* fibs = NULL;
+
+  struct {
+    struct nlmsghdr n;
+    struct ifinfomsg i;
+  } r;
+  
+  memset(&r, 0, sizeof(r));
+
+  r.n.nlmsg_len = NLMSG_LENGTH(sizeof(struct ifinfomsg));
+  r.n.nlmsg_type = RTM_GETNEIGH;
+  r.n.nlmsg_flags = NLM_F_DUMP | NLM_F_REQUEST;
+  r.n.nlmsg_pid = 0;
+  r.n.nlmsg_seq = 0;
+  r.i.ifi_family = PF_BRIDGE;
+  
+  // send request to dump the fdb table
+  send(rtnetlink_sock_fd, &r, r.n.nlmsg_len, 0);
+
+  while(1){
+    // receive the reply
+    len = read(rtnetlink_sock_fd, recv_buff, sizeof(recv_buff));
+
+    // parse the reply
+    struct nlmsghdr* nh = (struct nlmsghdr*)recv_buff;
+
+    while(NLMSG_OK(nh, len)){
+      if(nh->nlmsg_type == NLMSG_DONE){
+	goto end_of_netlink_messages;
+      }
+
+      n_fibs++;
+      fibs = realloc(fibs, sizeof(struct fib) * n_fibs);
+      
+      struct rtattr* rta = IFLA_RTA(NLMSG_DATA(nh));
+      rta = (struct rtattr*)((char*)rta - 4);
+      // add "-4" here because it works if and only if I do so... why??
+      
+      int l = nh->nlmsg_len;
+
+      {
+	// get the output device (switch port) of this fib
+	struct ndmsg* _ndmsg = NLMSG_DATA(nh);
+	char devname[IF_NAMESIZE];
+	if_indextoname(_ndmsg->ndm_ifindex, devname);
+	fibs[n_fibs - 1].destination = strdup(devname);
+      }
+      
+      while(RTA_OK(rta, l)){
+	int i;
+	
+	if(rta->rta_type == NDA_LLADDR){
+	  for(i=0;i<RTA_PAYLOAD(rta);i++)
+	    fibs[n_fibs - 1].addr[i] = ((unsigned char*)RTA_DATA(rta))[i];
+	}
+	
+	rta = RTA_NEXT(rta,l);
+      }
+      
+      nh = NLMSG_NEXT(nh, len);
+    }
+  }
+
+ end_of_netlink_messages:;
+
+  *results = fibs;
+
+  return n_fibs;
 }

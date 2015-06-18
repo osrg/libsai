@@ -26,4 +26,9 @@ int set_ip_address(unsigned int, int, const char*);
 int dev_up(const char*);
 int get_netdev_names(char***);
 
+struct fib{
+  unsigned char addr[6];
+  char* destination;
+};
+
 #endif
