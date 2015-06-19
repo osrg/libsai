@@ -16,7 +16,9 @@
 #include "sai.h"
 #include "saistatus.h"
 #include "sai_rocker_nexthop.h"
-#include "sai_rocker_vlan.h"
+#include "../impl/impl_sai_vlan.h"
+#include "rocker_vlan.h"
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -44,7 +46,7 @@ sai_status_t rocker_create_next_hop(_Out_ sai_object_id_t* next_hop_id,
   
   for(i=0;i<attr_count;i++){
     sai_attribute_t attr = attr_list[i];
-
+    
     switch(attr.id){
     case SAI_NEXT_HOP_ATTR_TYPE:
       if(attr.value.u32 != SAI_NEXT_HOP_IP)
@@ -55,7 +57,7 @@ sai_status_t rocker_create_next_hop(_Out_ sai_object_id_t* next_hop_id,
       n->interface_ip = attr.value.ip4;
       goto next_attr;
     case SAI_NEXT_HOP_ATTR_ROUTER_INTERFACE_ID:
-      n->br_name = get_vlan(attr.value.oid)->br_name;
+      n->br_name = ((struct __rocker_vlan*)(get_vlan(attr.value.oid)->data_plane_attributes))->br_name;
       goto next_attr;
     }
 

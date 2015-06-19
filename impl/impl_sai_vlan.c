@@ -17,11 +17,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "sai_rocker.h"
-#include "sai_rocker_vlan.h"
-#include "utils.h"
-
-sai_vlan_api_t rocker_vlan_api;
+#include "impl_sai_vlan.h"
+#include "../rocker/rocker_vlan.h"
 
 static int number_of_vlans;
 struct __vlan* vlans = NULL;
@@ -37,19 +34,19 @@ struct __vlan* get_vlan(sai_object_id_t vlan_id){
   return NULL;
 }
 
-sai_status_t rocker_create_vlan(_In_ sai_vlan_id_t vlan_id){
-  int i, ret;
-  char br_name[32];
+sai_status_t impl_create_vlan(sai_vlan_id_t vlan_id){
+  int i;
+  sai_status_t ret;
 
-  sprintf(br_name, "rocker_vlan%u", vlan_id);
-  
+  // make sure the given vlan_id is available
   for(i=0;i<number_of_vlans;i++){
     if(vlans[i].id == vlan_id){
       fprintf(stderr, "Error: given vlan_id (%d) already exsits.\n", vlan_id);
       return SAI_STATUS_INVALID_VLAN_ID;
     }
   }
-  
+
+  // add new vlan
   number_of_vlans++;
   vlans = realloc(vlans, number_of_vlans * sizeof(struct __vlan));
 
@@ -63,35 +60,15 @@ sai_status_t rocker_create_vlan(_In_ sai_vlan_id_t vlan_id){
   v->number_of_ports = 0;
   v->port_list = NULL;
 
-  // A bridge is created for every single VLAN.
-  // Rocker automatically assigns the same VLAN id for
-  // rocker ports connecetd to the same bridge.
-  v->br_name = strdup(br_name);
-  ret = create_bridge(br_name);
-  if(ret != 0)
-    return SAI_STATUS_FAILURE;    
-  
-  // 0xff is tentative and to be replaced by random values
-  sai_mac_t br_mac = {0x52, 0x54, 0, 0xff, 0xff, 0xff};
-  for(i=3;i<=5;i++){
-    br_mac[i] = get_random_byte();
-  }
-  memcpy(&v->br_mac, br_mac, 6);
-  ret = set_mac_address(v->br_mac, v->br_name);
-  if(ret != 0)
-    return SAI_STATUS_FAILURE;    
-
-  ret = dev_up(v->br_name);
-  if(ret != 0)
-    return SAI_STATUS_FAILURE;
-
-  SAI_STATUS_SUCCESS;
+  // data plane
+  ret = rocker_create_vlan(v);
 }
 
-sai_status_t rocker_add_ports_to_vlan(_In_ sai_vlan_id_t vlan_id, 
-				       _In_ uint32_t port_count,
-				       _In_ const sai_vlan_port_t* port_list){
-  int i, ret, n = -1;
+sai_status_t impl_add_ports_to_vlan(_In_ sai_vlan_id_t vlan_id, 
+				    _In_ uint32_t port_count,
+				    _In_ const sai_vlan_port_t* port_list){
+  sai_status_t ret;
+  int i, n = -1;
 
   for(i=0;i<number_of_vlans;i++){
     if(vlans[i].id == vlan_id){
@@ -116,14 +93,8 @@ sai_status_t rocker_add_ports_to_vlan(_In_ sai_vlan_id_t vlan_id,
   v->number_of_ports = new_size;
   memcpy(v->port_list + old_size, port_list, port_count);
 
-  // add devices associated to the given ports to the VLAN
-  for(i=0;i<port_count;i++){
-    struct __port* p = get_port(port_list[i].port_id);
-    ret = join_bridge(vlans[n].br_name, p->ifi_index);
+  // data plane
+  ret = rocker_add_ports_to_vlan(v, port_count, port_list);
 
-    if(ret < 0)
-      return SAI_STATUS_FAILURE;
-  }
-  
-  return SAI_STATUS_SUCCESS;
+  return ret;
 }

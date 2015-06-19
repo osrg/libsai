@@ -19,7 +19,6 @@
 #include "sairoute.h"
 
 #include "sai_rocker_route.h"
-#include "sai_rocker_vlan.h"
 #include "sai_rocker_nexthop.h"
 
 #include <stdio.h>

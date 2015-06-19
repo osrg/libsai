@@ -13,24 +13,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if !defined(_SAI_ROCKER_VLAN_H)
+#include "../impl/impl_sai_vlan.h"
 
-#define _SAI_ROCKER_VLAN_H
+sai_vlan_api_t rocker_vlan_api;
 
-#include "sai.h"
-#include "saitypes.h"
-#include "saivlan.h"
+sai_status_t stub_create_vlan(_In_ sai_vlan_id_t vlan_id){
+  return impl_create_vlan(vlan_id);
+}
 
-struct __vlan{
-  sai_vlan_id_t id;
-  int number_of_ports;
-  sai_vlan_port_t* port_list;
-  char* br_name;
-  sai_mac_t br_mac;
-};
-
-sai_status_t rocker_create_vlan(_In_ sai_vlan_id_t);
-sai_status_t rocker_add_ports_to_vlan(_In_ sai_vlan_id_t, _In_ uint32_t, _In_ const sai_vlan_port_t*);
-struct __vlan* get_vlan(sai_object_id_t);
-
-#endif
+sai_status_t stub_add_ports_to_vlan(_In_ sai_vlan_id_t vlan_id, 
+				    _In_ uint32_t port_count,
+				    _In_ const sai_vlan_port_t* port_list){
+  return impl_add_ports_to_vlan(vlan_id, port_count, port_list);
+}
