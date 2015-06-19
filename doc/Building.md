@@ -1,7 +1,7 @@
 # How to build Libsai
-1. Install QEMU with rocker software switch embedded.
- - We recommend to build the latest version retrieved from the [git repository](http://git.qemu.org/qemu.git).
- - No special build option is required to enable rocker device.
+1. Download QEMU source code from the [git repository](http://git.qemu.org/qemu.git) and build it.
+ - We strongly recommend this because packaged versions from distributions most probably do not yet support the software switch we use (rocker).
+ - No special build option is required.
 2. Install [Ubuntu 15.04 server](http://releases.ubuntu.com/vivid/) as a guest OS.
  - We recommend the simplest installation, with no LVM and all directories in the same partition.
  - If it takes unexpectedly long time, make sure that you have KVM support.
