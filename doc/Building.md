@@ -3,12 +3,16 @@
  - We recommend to build the latest version retrieved from the [git repository](http://git.qemu.org/qemu.git).
  - No special build option is required to enable rocker device.
 2. Install [Ubuntu 15.04 server](http://releases.ubuntu.com/vivid/) as a guest OS.
- - We recommend the simplest installation, with no LVM and no all directories in the same partition.
+ - We recommend the simplest installation, with no LVM and all directories in the same partition.
+ - If it takes unexpectedly long time, make sure that you have KVM support.
+    - Check your BIOS/UEFI setting to see if hardware virtualization support is enabled (some vendors disable it by default for security reasons).
+    - Check if kvm kernel module is installed by `lsmod | grep kvm`. If this yields no output, try `sudo apt-get install kvm`.
+    - Add `-enable-kvm` option on your QEMU execution command line.
  - Any other linux distribution _might_ work, if you have any strong reason to use one.
 3. Boot the guest OS and replace the kernel by the one with rocker driver enabled.
 
     ```
-    host-OS$ qemu-system-x86-64 [image name] -net nic -net user
+    host-OS$ qemu-system-x86-64 [image name] -net nic -net user -enable-kvm
     guest-OS$ git clone https://github.com/osrg/libsai
     guest-OS$ cd libsai/linux
     guest-OS$ sudo dpkg -i linux-image.deb
@@ -39,7 +43,7 @@
 7. Boot the switch VM and build libsai.
 
     ```
-    host-OS$ qemu-system-x86-64 [image of switch VM] -net nic -net user
+    host-OS$ qemu-system-x86-64 [image of switch VM] -net nic -net user -enable-kvm
     switch-VM$ sudo apt-get install gcc make
     switch-VM$ git clone https://github.com/opencomputeproject/OCP-Networking-Project-Community-Contributions OCP
     switch-VM$ export SAIDIR=/path/to/OCP/sai
