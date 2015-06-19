@@ -64,6 +64,36 @@ sai_status_t impl_create_vlan(sai_vlan_id_t vlan_id){
   ret = rocker_create_vlan(v);
 }
 
+sai_status_t impl_remove_vlan(sai_vlan_id_t vlan_id){
+  int i, index_removed_vlan = -1;
+
+  // make sure the given vlan_id exists
+  for(i=0;i<number_of_vlans;i++){
+    if(vlans[i].id == vlan_id){
+      index_removed_vlan = i;
+      break;
+    }
+  }
+  if(index_removed_vlan == -1){
+    fprintf(stderr, "Error: the given vlan id (%d) does not exist.\n", vlan_id);
+    return SAI_STATUS_INVALID_VLAN_ID;
+  }
+
+  // delete the vlans[index_removed_vlan]
+  for(i=0;i<number_of_vlans;i++){
+    if(i > index_removed_vlan){
+      vlans[i-1] = vlans[i];
+    }
+  }
+  number_of_vlans--;
+  vlans = realloc(vlans, sizeof(struct __vlan) * number_of_vlans);
+
+  // data plane
+  // not yet implemented
+
+  return SAI_STATUS_SUCCESS;
+}  
+
 sai_status_t impl_add_ports_to_vlan(_In_ sai_vlan_id_t vlan_id, 
 				    _In_ uint32_t port_count,
 				    _In_ const sai_vlan_port_t* port_list){
