@@ -159,4 +159,5 @@ __attribute__((constructor)) __rocker_init(){
   rocker_vlan_api.create_vlan = stub_create_vlan;
   rocker_vlan_api.remove_vlan = stub_remove_vlan;
   rocker_vlan_api.add_ports_to_vlan = stub_add_ports_to_vlan;
+  rocker_vlan_api.add_ports_to_vlan = stub_remove_ports_from_vlan;
 }

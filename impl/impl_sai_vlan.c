@@ -128,3 +128,47 @@ sai_status_t impl_add_ports_to_vlan(_In_ sai_vlan_id_t vlan_id,
 
   return ret;
 }
+
+static int remove_a_port_from_vlan(struct __vlan* v, sai_vlan_port_t port){
+  int i, j;
+  int deleted = 0;
+
+  for(i=0;i<v->number_of_ports;i++){
+    if(port.port_id == v->port_list[i].port_id){
+      // delete this port
+      deleted = 1;
+
+      for(j=i;j<v->number_of_ports;j++){
+	v->port_list[j-1] = v->port_list[j-1];
+      }
+
+      (v->number_of_ports)--;
+      v->port_list = realloc(v->port_list, sizeof(sai_vlan_port_t) * v->number_of_ports);
+
+      break;
+    }
+  }
+
+  return deleted;
+}
+
+sai_status_t impl_remove_ports_from_vlan(_In_ sai_vlan_id_t          vlan_id,
+                                         _In_ uint32_t               port_count,
+                                         _In_ const sai_vlan_port_t* port_list){
+  int i, j;
+  struct __vlan* v = get_vlan(vlan_id);
+
+  if(v == NULL){
+    fprintf(stderr, "Error: the given vlan id (%d) does not exist.\n", vlan_id);
+    return SAI_STATUS_INVALID_VLAN_ID;
+  }
+
+  for(i=0;i<port_count;i++){
+    remove_a_port_from_vlan(v, port_list[i]);
+  }
+
+  // data plane
+  // not yet implemented
+
+  return SAI_STATUS_SUCCESS;
+}

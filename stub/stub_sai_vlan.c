@@ -30,3 +30,9 @@ sai_status_t stub_add_ports_to_vlan(_In_ sai_vlan_id_t vlan_id,
 				    _In_ const sai_vlan_port_t* port_list){
   return impl_add_ports_to_vlan(vlan_id, port_count, port_list);
 }
+
+sai_status_t stub_remove_ports_from_vlan(_In_ sai_vlan_id_t vlan_id, 
+					 _In_ uint32_t port_count,
+					 _In_ const sai_vlan_port_t* port_list){
+  return impl_remove_ports_from_vlan(vlan_id, port_count, port_list);
+}
