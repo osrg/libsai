@@ -13,6 +13,12 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+#if !defined(_ROCKER_VLAN_H)
+
+#define _ROCKER_VLAN_H
+
+#include "../impl/impl_sai_vlan.h"
+
 struct __rocker_vlan {
   char* br_name;
   sai_mac_t br_mac;
@@ -20,3 +26,5 @@ struct __rocker_vlan {
 
 sai_status_t rocker_create_vlan(struct __vlan*);
 sai_status_t rocker_add_ports_to_vlan(const struct __vlan*, int, const sai_vlan_port_t*);
+
+#endif
