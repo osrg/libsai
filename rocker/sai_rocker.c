@@ -30,7 +30,7 @@
 #include "sai_rocker.h"
 #include "sai_rocker_port.h"
 #include "sai_rocker_switch.h"
-#include "../stub/stub_sai_vlan.h"
+#include "../impl/impl_sai_vlan.h"
 #include "sai_rocker_routerintf.h"
 #include "sai_rocker_nexthop.h"
 #include "sai_rocker_route.h"
@@ -156,8 +156,8 @@ __attribute__((constructor)) __rocker_init(){
   rocker_route_api.create_route = rocker_create_route;
 
   // vlan APIs
-  rocker_vlan_api.create_vlan = stub_create_vlan;
-  rocker_vlan_api.remove_vlan = stub_remove_vlan;
-  rocker_vlan_api.add_ports_to_vlan = stub_add_ports_to_vlan;
-  rocker_vlan_api.add_ports_to_vlan = stub_remove_ports_from_vlan;
+  rocker_vlan_api.create_vlan = impl_create_vlan;
+  rocker_vlan_api.remove_vlan = impl_remove_vlan;
+  rocker_vlan_api.add_ports_to_vlan = impl_add_ports_to_vlan;
+  rocker_vlan_api.add_ports_to_vlan = impl_remove_ports_from_vlan;
 }

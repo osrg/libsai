@@ -20,6 +20,8 @@
 #include "impl_sai_vlan.h"
 #include "../rocker/rocker_vlan.h"
 
+sai_vlan_api_t rocker_vlan_api;
+
 static int number_of_vlans;
 struct __vlan* vlans = NULL;
 
