@@ -32,7 +32,7 @@
 #include "../impl/impl_sai_vlan.h"
 #include "../impl/impl_sai_switch.h"
 #include "sai_rocker_routerintf.h"
-#include "sai_rocker_nexthop.h"
+#include "../impl/impl_sai_nexthop.h"
 #include "sai_rocker_route.h"
 #include "sai_rocker_router.h"
 #include "../netdev/netlink.h"
@@ -150,7 +150,7 @@ __attribute__((constructor)) __rocker_init(){
   rocker_router_interface_api.create_router_interface = rocker_create_router_interface;
 
   // next hop APIs
-  rocker_next_hop_api.create_next_hop = rocker_create_next_hop;
+  rocker_next_hop_api.create_next_hop = impl_create_next_hop;
 
   // route APIs
   rocker_route_api.create_route = rocker_create_route;

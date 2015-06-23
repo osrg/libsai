@@ -15,10 +15,8 @@
 
 #include "sai.h"
 #include "saistatus.h"
-#include "sai_rocker_nexthop.h"
-#include "../impl/impl_sai_vlan.h"
-#include "rocker_vlan.h"
-
+#include "impl_sai_nexthop.h"
+#include "impl_sai_vlan.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,13 +25,14 @@ extern struct __vlan* vlans; // defined and initialized in sai_rocker_vlan.c
 struct __next_hop* next_hops;
 static int _next_hop_id;
 
-sai_status_t rocker_create_next_hop(_Out_ sai_object_id_t* next_hop_id,
+sai_status_t impl_create_next_hop(_Out_ sai_object_id_t* next_hop_id,
 				 _In_ uint32_t attr_count,
 				 _In_ const sai_attribute_t *attr_list){
   int i;
   *next_hop_id = _next_hop_id;
   sai_ip4_t interface_ip;
 
+  // create a new nexthop
   next_hops = realloc(next_hops, _next_hop_id * sizeof(struct __next_hop));
   if(next_hops == NULL){
     fprintf(stderr, "Error: allocation memory for a new next_hop failed\n");
@@ -43,7 +42,8 @@ sai_status_t rocker_create_next_hop(_Out_ sai_object_id_t* next_hop_id,
   struct __next_hop* n = &next_hops[_next_hop_id];
   n->id = _next_hop_id;
   _next_hop_id++;
-  
+
+  // handle the given attributes
   for(i=0;i<attr_count;i++){
     sai_attribute_t attr = attr_list[i];
     
@@ -57,7 +57,7 @@ sai_status_t rocker_create_next_hop(_Out_ sai_object_id_t* next_hop_id,
       n->interface_ip = attr.value.ip4;
       goto next_attr;
     case SAI_NEXT_HOP_ATTR_ROUTER_INTERFACE_ID:
-      n->br_name = ((struct __rocker_vlan*)(get_vlan(attr.value.oid)->data_plane_attributes))->br_name;
+      n->interface_id = attr.value.oid;
       goto next_attr;
     }
 

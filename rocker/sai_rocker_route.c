@@ -19,7 +19,8 @@
 #include "sairoute.h"
 
 #include "sai_rocker_route.h"
-#include "sai_rocker_nexthop.h"
+#include "../impl/impl_sai_nexthop.h"
+#include "rocker_vlan.h"
 
 #include <stdio.h>
 
@@ -59,7 +60,7 @@ sai_status_t rocker_create_route(_In_ const sai_unicast_route_entry_t* unicast_r
   //    ip addr add destination/netmask_bits dev next_hop->br_name
   // which introduces an appropriate ip route automatically
   // (What if the routing is comlex like connecting two virtual routers??)
-  set_ip_address(next_hop->interface_ip, netmask_bits, next_hop->br_name);
+  set_ip_address(next_hop->interface_ip, netmask_bits, ((struct __rocker_vlan*)(get_vlan(next_hop->interface_id)->data_plane_attributes))->br_name);
   
   return SAI_STATUS_SUCCESS;
 }
