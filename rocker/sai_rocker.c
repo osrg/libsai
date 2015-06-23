@@ -29,8 +29,8 @@
 // sai_rocker headers
 #include "sai_rocker.h"
 #include "sai_rocker_port.h"
-#include "sai_rocker_switch.h"
 #include "../impl/impl_sai_vlan.h"
+#include "../impl/impl_sai_switch.h"
 #include "sai_rocker_routerintf.h"
 #include "sai_rocker_nexthop.h"
 #include "sai_rocker_route.h"
@@ -91,7 +91,7 @@ struct __port* get_port(sai_object_id_t port_id){
 int get_port_number(const struct __port_list* plist){
   int n = 0;
   const struct __port_list* ptr;
-  
+
   for(ptr=plist;ptr->this_port != NULL;ptr=ptr->remaining_ports){
     n++;
   }
@@ -140,8 +140,8 @@ __attribute__((constructor)) __rocker_init(){
   rocker_sai_port_api.get_port_attribute = rocker_get_port_attribute;
 
   // switch APIs
-  rocker_sai_switch_api.initialize_switch = rocker_initialize_switch;
-  rocker_sai_switch_api.get_switch_attribute = rocker_get_switch_attribute;
+  rocker_sai_switch_api.initialize_switch = impl_initialize_switch;
+  rocker_sai_switch_api.get_switch_attribute = impl_get_switch_attribute;
 
   // virtual router APIs
   rocker_virtual_router_api.create_virtual_router = rocker_create_virtual_router;

@@ -13,18 +13,29 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-#if !defined(_SAI_ROCKER_SWITCH_H)
+#include <stdio.h> // NULL
+#include "sai_rocker.h"
 
-#define _SAI_ROCKER_SWITCH_H
+extern struct __port_list* global_plist;
 
-#include "sai.h"
-#include "saiswitch.h"
+int rocker_get_port_number(){
+  static int first_call = 1;
+  static int n_ports_cached;
+  
+  if(first_call){
+    n_ports_cached = get_port_number(global_plist);
+    first_call = 0;
+  }
 
-sai_status_t rocker_get_switch_attribute(_In_ uint32_t, _Inout_ sai_attribute_t*);
-sai_status_t rocker_initialize_switch(_In_ sai_switch_profile_id_t,
-				      _In_reads_z_(SAI_MAX_HARDWARE_ID_LEN) char*,
-				      _In_reads_opt_z_(SAI_MAX_FIRMWARE_PATH_NAME_LEN) char*,
-				      _In_ sai_switch_notification_t*);
+  return n_ports_cached;
+}
 
+int set_ports_up(struct __port_list* plist){
+  int i;
+  int n_ports = get_port_number(plist);
 
-#endif
+  for(i=0;i<n_ports;i++){
+    struct __port* p = get_port(i);
+    dev_up(p->name);
+  }
+}
