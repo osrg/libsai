@@ -96,7 +96,16 @@ int join_bridge(const char* brname, int port_ifiindex){
   } r;
   const char* dev_type = "bridge";
   int ret;
-  int br_ifiindex = if_nametoindex(brname);
+  int br_ifiindex;
+
+  // join
+  if(brname != NULL){
+    br_ifiindex = if_nametoindex(brname);
+  }
+  // leave
+  else {
+    br_ifiindex = 0;
+  }
 
   memset(&r, 0, sizeof(r));
 
@@ -111,6 +120,10 @@ int join_bridge(const char* brname, int port_ifiindex){
   send(rtnetlink_sock_fd, &r, r.n.nlmsg_len, 0);
 
   return 0;
+}
+
+int leave_bridge(int port_ifiindex){
+  return join_bridge(NULL, port_ifiindex);
 }
 
 int set_ip_address(unsigned int ip, int netmask, const char* devname){
