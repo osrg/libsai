@@ -25,6 +25,10 @@ sai_vlan_api_t rocker_vlan_api;
 static int number_of_vlans;
 struct __vlan* vlans = NULL;
 
+// instantiated in impl_sai_switch.c
+extern sai_object_id_t* ports;
+extern sai_vlan_id_t* port_vlans;
+
 struct __vlan* get_vlan(sai_object_id_t vlan_id){
   int i;
 
@@ -100,20 +104,37 @@ sai_status_t impl_add_ports_to_vlan(_In_ sai_vlan_id_t vlan_id,
 				    _In_ uint32_t port_count,
 				    _In_ const sai_vlan_port_t* port_list){
   sai_status_t ret;
-  int i, n = -1;
-
+  int i, index_target_vlan = -1;
+  int number_of_ports = get_port_number();
+  char msg[256];
+  
   for(i=0;i<number_of_vlans;i++){
     if(vlans[i].id == vlan_id){
-      n = i;
+      index_target_vlan = i;
+      break;
     }
   }
 
-  if(n == -1){
+  if(index_target_vlan == -1){
     fprintf(stderr, "Error: a VLAN with the given vlan id (%d) does not exit.\n", vlan_id);
     return SAI_STATUS_INVALID_VLAN_ID;
   }
 
-  struct __vlan* v = &vlans[n];
+  // remove the given ports from the old vlan to which they have belonged
+  for (i = 0; i < (int)port_count; i++) {
+    if ((int)port_list[i].port_id >= number_of_ports){
+      fprintf(stderr, "the given port id (%d) is too large\n", port_list[i].port_id);
+      return SAI_STATUS_INVALID_PORT_NUMBER;
+    }
+    
+    sai_vlan_id_t old_vlan = port_vlans[port_list[i].port_id];
+    if (old_vlan != VLAN_ID_NOT_ASSIGNED) {
+      impl_remove_ports_from_vlan(old_vlan, 1, &port_list[i]);
+    }
+    port_vlans[port_list[i].port_id] = vlan_id;
+  }
+  
+  struct __vlan* v = &vlans[index_target_vlan];
   int old_size = v->number_of_ports, new_size = old_size + port_count;
   v->port_list = realloc(v->port_list, new_size * sizeof(sai_vlan_port_t));
 
@@ -123,8 +144,20 @@ sai_status_t impl_add_ports_to_vlan(_In_ sai_vlan_id_t vlan_id,
   }
 
   v->number_of_ports = new_size;
-  memcpy(v->port_list + old_size, port_list, port_count);
-
+  memcpy(v->port_list + old_size, port_list, port_count * sizeof(sai_vlan_port_t));
+  
+  sprintf(msg, "Ports added to VLAN(%u):", vlan_id);
+  for (i = 0; i < v->number_of_ports; i++) {
+    sprintf(msg, "%s %d", msg, (int)v->port_list[i].port_id);
+  }
+  fprintf(stderr, "%s\n", msg);
+  
+  sprintf(msg, "Vlan assigned to each port:");
+  for (i = 0; i < /*global*/number_of_ports; i++) {
+    sprintf(msg, "%s %d", msg, port_vlans[i]);
+  }
+  fprintf(stderr, "%s\n", msg);
+  
   // data plane
   ret = rocker_add_ports_to_vlan(v, port_count, port_list);
 
@@ -134,7 +167,7 @@ sai_status_t impl_add_ports_to_vlan(_In_ sai_vlan_id_t vlan_id,
 static int remove_a_port_from_vlan(struct __vlan* v, sai_vlan_port_t port){
   int i, j;
   int deleted = 0;
-
+  
   for(i=0;i<v->number_of_ports;i++){
     if(port.port_id == v->port_list[i].port_id){
       // delete this port
@@ -146,6 +179,9 @@ static int remove_a_port_from_vlan(struct __vlan* v, sai_vlan_port_t port){
 
       (v->number_of_ports)--;
       v->port_list = realloc(v->port_list, sizeof(sai_vlan_port_t) * v->number_of_ports);
+
+      // data plane
+      rocker_remove_a_port_from_vlan(v, port);
 
       break;
     }

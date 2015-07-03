@@ -23,7 +23,7 @@ int rocker_get_port_number(){
   static int n_ports_cached;
   
   if(first_call){
-    n_ports_cached = get_port_number(global_plist);
+    n_ports_cached = get_port_number_plist(global_plist);
     first_call = 0;
   }
 
@@ -32,7 +32,7 @@ int rocker_get_port_number(){
 
 int set_ports_up(struct __port_list* plist){
   int i;
-  int n_ports = get_port_number(plist);
+  int n_ports = get_port_number_plist(plist);
 
   for(i=0;i<n_ports;i++){
     struct __port* p = get_port(i);

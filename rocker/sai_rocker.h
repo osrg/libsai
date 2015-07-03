@@ -29,6 +29,7 @@ struct __port_list{
   struct __port_list* remaining_ports;
 };
 
+int get_port_number_plist(const struct __port_list*);
 struct __port_list* get_dev_list();
 struct __port* get_port(sai_object_id_t);
 

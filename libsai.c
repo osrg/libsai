@@ -202,7 +202,7 @@ Router* create_router(){
 
 Vlan* create_vlan(int number_of_ports, .../* Port* p1, Port* p2, ... */){
   va_list ap;
-  static int _internal_id;
+  static int _internal_id = 10; // TO BE FIXED: vlan id starts from 10 and assgined automatically
   Vlan* v;
   int i;
 

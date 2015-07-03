@@ -21,6 +21,7 @@
 #include "saitypes.h"
 #include "saistatus.h"
 
+int get_port_number();
 sai_status_t impl_get_switch_attribute(_In_ uint32_t attr_count, _Inout_ sai_attribute_t *attr_list);
 sai_status_t impl_initialize_switch(_In_ sai_switch_profile_id_t profile_id,
 				    _In_reads_z_(SAI_MAX_HARDWARE_ID_LEN) char* switch_hardware_id,

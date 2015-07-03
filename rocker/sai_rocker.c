@@ -88,7 +88,7 @@ struct __port* get_port(sai_object_id_t port_id){
   return ptr->this_port;
 }
 
-int get_port_number(const struct __port_list* plist){
+int get_port_number_plist(const struct __port_list* plist){
   int n = 0;
   const struct __port_list* ptr;
 

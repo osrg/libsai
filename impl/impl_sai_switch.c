@@ -18,6 +18,7 @@
 #include <string.h>
 
 #include "impl_sai_switch.h"
+#include "impl_sai_vlan.h"
 #include "impl_sai_util.h"
 #include "../rocker/sai_rocker.h"
 #include "../rocker/sai_rocker_fdb.h"
@@ -33,7 +34,10 @@ static struct __switch* sw;
 extern struct __port_list* global_plist;
 sai_switch_api_t rocker_sai_switch_api;
 
-static int get_port_number(){
+sai_object_id_t* ports;
+sai_vlan_id_t* port_vlans;
+
+int get_port_number(){
   return rocker_get_port_number();
 }
 
@@ -83,16 +87,51 @@ sai_status_t impl_get_switch_attribute(_In_ uint32_t attr_count, _Inout_ sai_att
   return SAI_STATUS_SUCCESS;
 }
 
-sai_status_t sai_set_switch_attribute(_In_ const sai_attribute_t *attr){
-  sai_vlan_id_t vlan_id;
+static sai_status_t default_port_vlan_set(sai_vlan_id_t vlan_id_new){
+    sai_status_t ret;
+    struct __vlan* vlan_current;
 
+    // create a new vlan
+    ret = impl_create_vlan(vlan_id_new);
+    if (ret != SAI_STATUS_SUCCESS) {
+      return ret;
+    }
+
+    // retrieving the current default vlan.
+    // This must be executed after impl_create_vlan(vlan_id_new), which realloc()s vlans
+    vlan_current = get_vlan(sw->default_port_vlan_id);
+
+    fprintf(stderr, "Default vlan changed from %u to %u\n", vlan_current->id, vlan_id_new);
+
+    // Add ports of old default vlan to the new default vlan.
+    sai_vlan_port_t* ports_to_add = (sai_vlan_port_t*)malloc(sizeof(sai_vlan_port_t) * vlan_current->number_of_ports);
+    memcpy(ports_to_add, vlan_current->port_list, sizeof(sai_vlan_port_t) * vlan_current->number_of_ports);
+    impl_add_ports_to_vlan(vlan_id_new, vlan_current->number_of_ports, ports_to_add);
+    free(ports_to_add);
+
+    // set the default vlan to the new id and remove the old one
+    sw->default_port_vlan_id = vlan_id_new;
+    impl_remove_vlan(vlan_current->id);
+
+    return SAI_STATUS_SUCCESS;
+}
+
+sai_status_t sai_set_switch_attribute(_In_ const sai_attribute_t *attr){
+  sai_status_t ret;
+  sai_vlan_id_t vlan_id;
+  
   switch(attr->id){
+  case SAI_SWITCH_ATTR_SWITCHING_MODE:
+    
   case SAI_SWITCH_ATTR_DEFAULT_PORT_VLAN_ID:
     vlan_id = attr->value.u16;
 
     if(vlan_id_range_ok(vlan_id)){
-      sw->default_port_vlan_id = vlan_id;
-      // should we move the ports belonging to the old default vlan to the new default vlan?
+      ret = default_port_vlan_set(vlan_id);
+
+      if(ret != SAI_STATUS_SUCCESS){
+	return ret;
+      }
     }
     else{
       fprintf(stderr, "vlan_id (%d) must satisfy 1 <= vlan_id <= 4095\n", vlan_id);
@@ -117,6 +156,12 @@ sai_status_t impl_initialize_switch(_In_ sai_switch_profile_id_t profile_id,
 				      _In_reads_opt_z_(SAI_MAX_FIRMWARE_PATH_NAME_LEN) char* firmware_path_name,
 				      _In_ sai_switch_notification_t* switch_notifications
 				      ){
+  int number_of_ports, i;
+
+  // data plane
+  global_plist = get_dev_list();
+  number_of_ports = get_port_number();
+
   if(switch_notifications != NULL){
     if(switch_notifications->on_fdb_event != NULL){
       pthread_t pt;
@@ -132,9 +177,30 @@ sai_status_t impl_initialize_switch(_In_ sai_switch_profile_id_t profile_id,
   sw = (struct __switch*)malloc(sizeof(struct __switch));
   sw->default_port_vlan_id = 1; // default value of for default vlan id
 
-  // data plane
-  global_plist = get_dev_list();
+  ports = (sai_object_id_t*)malloc(sizeof(sai_object_id_t) * number_of_ports);
+  port_vlans = (sai_vlan_id_t*)malloc(sizeof(sai_vlan_id_t) * number_of_ports);
+  if (ports == NULL || port_vlans == NULL) {
+    fprintf(stderr, "Cannot allocate sufficient amount of memory for the ports.\n");
+    return SAI_STATUS_NO_MEMORY;
+  }
+  for (i = 0; i < number_of_ports; i++) {
+    ports[i] = i;
+    port_vlans[i] = VLAN_ID_NOT_ASSIGNED;
+  }
+  
+  // data plane, must be executed before adding ports to the default vlan?
   set_ports_up(global_plist);
+
+  // assign all ports to the default vlan
+  sai_vlan_port_t* vlan_ports = (sai_vlan_port_t*)malloc(sizeof(sai_vlan_port_t) * number_of_ports);
+  for (i = 0; i < number_of_ports; i++) {
+    vlan_ports[i].port_id = ports[i];
+    vlan_ports[i].tagging_mode = SAI_VLAN_PORT_TAGGED;
+  }
+  sw->default_port_vlan_id = 1;
+  impl_create_vlan(1);
+  impl_add_ports_to_vlan(1, number_of_ports, vlan_ports);
+  free(vlan_ports);
 
   return SAI_STATUS_SUCCESS;
 }

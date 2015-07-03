@@ -74,3 +74,16 @@ sai_status_t rocker_add_ports_to_vlan(const struct __vlan* v, int port_count, co
   
   return SAI_STATUS_SUCCESS;
 }
+
+sai_status_t rocker_remove_a_port_from_vlan(const struct __vlan* v, sai_vlan_port_t port){
+  int ret;
+  struct __rocker_vlan* rocker_vlan = (struct __rocker_vlan*)v->data_plane_attributes;
+  struct __port* p = get_port(port.port_id);
+
+  ret = leave_bridge(p->ifi_index);
+
+  if(ret < 0)
+    return SAI_STATUS_FAILURE;
+
+  return SAI_STATUS_SUCCESS;
+}

@@ -6,6 +6,8 @@
 #include "saistatus.h"
 #include "saivlan.h"
 
+#define VLAN_ID_NOT_ASSIGNED (9999)
+
 struct __vlan{
   sai_vlan_id_t id;
   int number_of_ports;
