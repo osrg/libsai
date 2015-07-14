@@ -16,7 +16,7 @@
 #include "sairoute.h"
 
 #include "rocker_vlan.h"
-#include "../impl/impl_sai_nexthop.h"
+#include "../../impl/impl_sai_nexthop.h"
 
 int set_route(const sai_unicast_route_entry_t* route_entry, struct __next_hop* next_hop){
   int netmask_bits, ret;

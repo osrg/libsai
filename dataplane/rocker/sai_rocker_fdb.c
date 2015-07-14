@@ -19,7 +19,7 @@
 #include "saifdb.h"
 
 #include "sai_rocker_fdb.h"
-#include "../netdev/netlink.h"
+#include "../../netdev/netlink.h"
 
 static struct fib* fdb;
 static int fdb_size;

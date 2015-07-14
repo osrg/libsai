@@ -20,8 +20,8 @@
 #include "impl_sai_switch.h"
 #include "impl_sai_vlan.h"
 #include "impl_sai_util.h"
-#include "../rocker/sai_rocker.h"
-#include "../rocker/sai_rocker_fdb.h"
+#include "../dataplane/rocker/sai_rocker.h"
+#include "../dataplane/rocker/sai_rocker_fdb.h"
 
 #define NO_DATA_PLANE
 

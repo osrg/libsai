@@ -17,7 +17,7 @@
 
 #define _ROCKER_VLAN_H
 
-#include "../impl/impl_sai_vlan.h"
+#include "../../impl/impl_sai_vlan.h"
 
 struct __rocker_vlan {
   char* br_name;

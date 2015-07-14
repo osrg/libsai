@@ -21,7 +21,7 @@
 #include "saitypes.h"
 #include "saivlan.h"
 
-#include "../impl/impl_sai_vlan.h"
+#include "../../impl/impl_sai_vlan.h"
 #include "sai_rocker.h"
 #include "rocker_vlan.h"
 

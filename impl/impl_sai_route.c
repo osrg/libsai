@@ -20,7 +20,7 @@
 
 #include "impl_sai_route.h"
 #include "impl_sai_nexthop.h"
-#include "../rocker/rocker_vlan.h"
+#include "../dataplane/rocker/rocker_vlan.h"
 
 #include <stdio.h>
 

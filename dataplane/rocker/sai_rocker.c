@@ -29,14 +29,14 @@
 // sai_rocker headers
 #include "sai_rocker.h"
 #include "sai_rocker_port.h"
-#include "../impl/impl_sai_vlan.h"
-#include "../impl/impl_sai_switch.h"
-#include "../impl/impl_sai_route.h"
+#include "../../impl/impl_sai_vlan.h"
+#include "../../impl/impl_sai_switch.h"
+#include "../../impl/impl_sai_route.h"
 #include "sai_rocker_routerintf.h"
-#include "../impl/impl_sai_nexthop.h"
+#include "../../impl/impl_sai_nexthop.h"
 #include "sai_rocker_router.h"
-#include "../netdev/netlink.h"
-#include "../netdev/ethtool.h"
+#include "../../netdev/netlink.h"
+#include "../../netdev/ethtool.h"
 
 struct __port_list* global_plist;
 
