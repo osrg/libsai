@@ -1,16 +1,3 @@
-# Files and Directories
-- dataplane/rocker
-- doc
-- impl
-- netdev
-- LICENSE
-- Makefile
-- README.md
-- libsai.c
-- libsai.h
-- main.c
-- fdb_notification_sample.c
-
 # Files in the "impl" directory
 The files in this directory are "dataplane-independent" SAI implmentation.
 "Dataplane-independent" SAI implementation means that the codes in this directory
@@ -78,3 +65,17 @@ These three files implement a sample application using our SAI implementation. T
 
 libsai.{c,h} calls SAI functions and provides more abstracted functionalitieis (e.g. create_new_route), and main.c calls these abstracted functionatilies to implement the sample application.
 The ideal case is that libsai.{c,h} work on other SAI implementations (e.g. broadcom SAI) as well (but it's just a hope and not tested).
+
+# linux/linux-image.deb
+This is a linux kernel compiled with rocker software switch enabled.
+
+Installing this kernel requires only to execute "dpkg -i linux-image.deb", thanks to debian tools for creating a .deb package of a kernel.
+The dpkg command also takes care of the grub setting and kernel module placing, so you really need to care nothing.
+
+The kernel is compiled using the config and the source code of Ubuntu Server 15.04, so the base system to install this kernel must also be Ubuntu Server 15.04.
+(Installing this kernel into other versions of Ubuntu or even to other distributions may break the system.)
+
+The difference of this kernel between the original destribution version are that the following configs are enabled to user rocker software switch:
+- CONFIG_NET_SWITCHDEV=y
+- CONFIG_NET_VENDOR_ROCKER=y
+- CONFIG_ROCKER=m
