@@ -53,21 +53,21 @@ The files in this directory are libraries for communicating with the linux netwo
 ## ethtool.c
 Functions in this file invoke kernel networking functionalities using "ethtool" ioctl interace.
   - get_port_speed("eth0") is equivalent to a user command "ethtool eth0 | grep Speed"
-    - get_driver_info("eth0") is equivalent to a user command "ethtool -i eth0 | grep driver"
-      - \_\_ethtool\_init() is called only once to initialize a socket used for ioclt before main() is called.
+  - get_driver_info("eth0") is equivalent to a user command "ethtool -i eth0 | grep driver"
+  - \_\_ethtool\_init() is called only once to initialize a socket used for ioclt before main() is called.
 
 ## netlink.c
 Functions in this file invoke kernel networking functionalities using "netlink" ioctl interace.
 
 Useful documents to understand what is done in netlink messasing.
   - http://man7.org/linux/man-pages/man3/rtnetlink.3.html
-      "EXAMPLE" section in this page MUST be checked before reading the codes in this directory.
-        - Source code of iproute2 user command, especially iproute2/ip/iplink.c:iplink\_modify()
+    "EXAMPLE" section in this page MUST be checked before reading the codes in this directory.
+  - Source code of iproute2 user command, especially iproute2/ip/iplink.c:iplink\_modify()
 
 The data structure for a netlink message consists of
   - *the* header `struct nlmsghdr',
-    - one payload `struct if****msg' (e.g. ifinfomsg, ifaddrmsg) for the mandatory message, and
-      - buffer for optional payloads to be added on demand (char \_[1024] in the code).
+  - one payload `struct if****msg' (e.g. ifinfomsg, ifaddrmsg) for the mandatory message, and
+  - buffer for optional payloads to be added on demand (char \_[1024] in the code).
 
 Optional payloads are stored into the buffer (named "\_") using add_netlink_msg().
 Note that the weird name "\_" means that this buffer must not be accessed by its name directly (like \_[0] = 1 is never supposed to occur), but add_netlink_msg() must be used instead.
