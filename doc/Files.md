@@ -72,3 +72,9 @@ The data structure for a netlink message consists of
 
 Optional payloads are stored into the buffer (named "\_") using add_netlink_msg().
 Note that the weird name "\_" means that this buffer must not be accessed by its name directly (like \_[0] = 1 is never supposed to occur), but add_netlink_msg() must be used instead.
+
+# libsai.{c,h}, main.c
+These three files implement a sample application using our SAI implementation. The description of the application is in README.md
+
+libsai.{c,h} calls SAI functions and provides more abstracted functionalitieis (e.g. create_new_route), and main.c calls these abstracted functionatilies to implement the sample application.
+The ideal case is that libsai.{c,h} work on other SAI implementations (e.g. broadcom SAI) as well (but it's just a hope and not tested).
