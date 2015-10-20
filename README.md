@@ -88,9 +88,7 @@ In main.c the topology used above is intutively coded.
 
 You can create as many VLANs as you want and create more complex routes by using these abstractions.
 
-If you want to do something by directily touching SAI APIs, see libsai.c and libsai.h
-
-If you want to know what it does between SAI APIs and rocker device (i.e. data plane), see rocker/*.c
+Detailed descriptions of the directories and files in the repository can be found ar [doc/Files.md](doc/Files.md)
 
 ## Copyright
 Copyright (C) 2015 [Nippon Telegraph and Telephone Corporation](http://www.ntt.co.jp/index_e.html). Released under [Apache License 2.0](LICENSE).
