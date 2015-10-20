@@ -1,10 +1,12 @@
+![Structure of the directories and files in the repo](libsai_structure.png)
+
 # Files in the "impl" directory
 The files in this directory are "dataplane-independent" SAI implmentation.
 "Dataplane-independent" SAI implementation means that the codes in this directory
 - Do general SAI operations such as:
-- Creating a VLAN
-- Adding a port to a VLAN
-- Creating an L3 route
+ - Creating a VLAN
+ - Adding a port to a VLAN
+ - Creating an L3 route
 - And then call corresponding rocker specific specific operation funcions.
 
 For example, impl_sai_vlan.c:impl_create_vlan() operates a general data structure for vlan, and then calls `rocker_create_vlan()' at the end of the function.
