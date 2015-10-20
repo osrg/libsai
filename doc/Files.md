@@ -1,8 +1,8 @@
+# Overview of the directories and files in the repo
 ![Structure of the directories and files in the repo](libsai_structure.png)
 
 # Files in the "impl" directory
-The files in this directory are "dataplane-independent" SAI implmentation.
-"Dataplane-independent" SAI implementation means that the codes in this directory
+The files in this directory are "dataplane-independent" SAI implmentation, which means that the codes in this directory
 - Do general SAI operations such as:
  - Creating a VLAN
  - Adding a port to a VLAN
@@ -24,9 +24,9 @@ For example, `struct __vlan' in impl_sai_vlan.h is defined as follows:
       void* data_plane_attributes;
     };
 
-Here "id", "number_of_ports", and "port_list" are dataplane-independent data and the void* at last is the pointer to the dataplane-dependent part of a vlan data structure (we do this because there is no inheritance in pure C).
-The contents of the void* are stored by the dataplane code, and the code in this directory must be unaware of it.
-If the code in this directory care the content of the pointer, there must be a bug (or at least design violation).
+Here `id`, `number_of_ports`, and `port_list` are dataplane-independent data and the void* at the tail is the pointer to the dataplane-dependent part of the vlan data structure (we do this because there is no inheritance in pure C).
+The contents of the void* are stored by the dataplane code, and the code in impl directory must be unaware of them.
+If the code in this directory care the contents of the pointer, there must be a bug (or at least a design violation).
 
 # Files in the "dataplane/rocker" directory
 The files in this directory are "dataplane-dependent" operations for rocker such as:
@@ -77,7 +77,7 @@ The dpkg command also takes care of the grub setting and kernel module placing, 
 The kernel is compiled using the config and the source code of Ubuntu Server 15.04, so the base system to install this kernel must also be Ubuntu Server 15.04.
 (Installing this kernel into other versions of Ubuntu or even to other distributions may break the system.)
 
-The difference of this kernel between the original destribution version are that the following configs are enabled to user rocker software switch:
+The difference of this kernel between the original destribution version is that the following configs are enabled to use rocker software switch:
 - CONFIG_NET_SWITCHDEV=y
 - CONFIG_NET_VENDOR_ROCKER=y
 - CONFIG_ROCKER=m
